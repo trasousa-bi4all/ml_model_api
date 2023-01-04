@@ -1,0 +1,16 @@
+FROM python:3.9.10-slim-buster
+
+RUN mkdir /temp && mkdir /app
+
+COPY requirements.txt /temp
+
+RUN pip install -r /temp/requirements.txt
+
+COPY src/* /app 
+COPY model/HR-RandomForest.pkl /app
+
+WORKDIR /app
+
+EXPOSE 8000
+
+CMD ["gunicorn", "-k", "uvicorn.workers.UvicornWorker", "-b", "0.0.0.0:8000", "--timeout", "600", "app:app"]
